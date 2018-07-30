@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "675580169297",
+    "firebase_url": "https://reddrop-ae365.firebaseio.com",
+    "project_id": "reddrop-ae365",
+    "storage_bucket": "reddrop-ae365.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675580169297:android:87d3f898664ce618",
+        "android_client_info": {
+          "package_name": "app.clairvoyant.reddrop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "675580169297-etebvrpttiple6vmpn8o5kim34copb6r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.clairvoyant.reddrop",
+            "certificate_hash": "67b860cfce5c86fe96708484d89c659943a6d139"
+          }
+        },
+        {
+          "client_id": "675580169297-q3r7osmgtqqshmkprmqt06k47jsc04ot.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKeQkUolxZuVgXjFU4zIl1K_WT6RN8Crs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "675580169297-q3r7osmgtqqshmkprmqt06k47jsc04ot.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
