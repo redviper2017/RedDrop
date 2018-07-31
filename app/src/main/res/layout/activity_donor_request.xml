@@ -57,7 +57,7 @@
                     android:layout_below="@id/contact_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Name of the Hospital"/>
+                    android:hint="Name of the Hospital, area"/>
                 <Spinner
                     android:id="@+id/spinner_unitsRequired"
                     android:layout_below="@id/contact_location"
