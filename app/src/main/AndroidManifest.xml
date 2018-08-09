@@ -24,6 +24,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".DonorRequestActivity"></activity>
+        <service
+            android:name=".GeocodeAddressIntentService"
+            android:exported="false"/>
     </application>
 
 </manifest>
