@@ -1,28 +1,30 @@
 package app.clairvoyant.reddrop;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class AuthActivity extends AppCompatActivity {
+public class AuthActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private Spinner area, city, bloodGroup;
     private CircleImageView imageView;
     private static final int SELECT_PHOTO = 100;
+
+    private static final String TAG = "Auth Activity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +107,8 @@ public class AuthActivity extends AppCompatActivity {
         city.setAdapter(citiesDataAdapter);
 
         bloodGroup.setAdapter(bloodGroupsDataAdapter);
+
+        city.setOnItemSelectedListener(this);
     }
 
     @Override
@@ -119,5 +123,33 @@ public class AuthActivity extends AppCompatActivity {
                     }
                 }
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        String s = (String) adapterView.getItemAtPosition(i);
+        Log.d(TAG,"item selected: "+s);
+        if (!s.equals("City") && !s.equals("Dhaka")) {
+            switch (adapterView.getId()) {
+                case R.id.spinner_city_name:
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("Sorry, we haven't started our service in this city yet.");
+                    builder.setCancelable(true);
+                    builder.setNeutralButton(
+                            "Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.cancel();
+                                }
+                            });
+                    builder.show();
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 }

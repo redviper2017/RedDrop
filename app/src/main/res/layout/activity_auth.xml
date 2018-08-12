@@ -60,7 +60,8 @@
                 android:layout_height="wrap_content"
                 android:hint="Name"
                 android:drawableLeft="@drawable/ic_person_black_24dp"
-                android:drawablePadding="@dimen/_3sdp"/>
+                android:drawablePadding="@dimen/_3sdp"
+                android:inputType="textPersonName"/>
             <EditText
                 android:id="@+id/donor_email"
                 android:layout_below="@id/donor_name"
@@ -68,7 +69,8 @@
                 android:layout_height="wrap_content"
                 android:hint="Email"
                 android:drawableLeft="@drawable/ic_email_black_24dp"
-                android:drawablePadding="@dimen/_3sdp"/>
+                android:drawablePadding="@dimen/_3sdp"
+                android:inputType="textEmailAddress"/>
             <EditText
                 android:id="@+id/donor_password"
                 android:layout_below="@id/donor_email"
@@ -76,7 +78,8 @@
                 android:layout_height="wrap_content"
                 android:hint="Password"
                 android:drawableLeft="@drawable/ic_lock_open_black_24dp"
-                android:drawablePadding="@dimen/_3sdp"/>
+                android:drawablePadding="@dimen/_3sdp"
+                android:inputType="textPassword"/>
             <EditText
                 android:id="@+id/donor_number"
                 android:layout_below="@id/donor_password"
@@ -84,7 +87,8 @@
                 android:layout_height="wrap_content"
                 android:hint="Mobile Number"
                 android:drawableLeft="@drawable/ic_local_phone_black_24dp"
-                android:drawablePadding="@dimen/_3sdp"/>
+                android:drawablePadding="@dimen/_3sdp"
+                android:inputType="number"/>
             <TextView
                 android:id="@+id/donor_location"
                 android:layout_below="@id/donor_number"
