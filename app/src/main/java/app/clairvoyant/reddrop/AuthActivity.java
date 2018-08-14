@@ -26,6 +26,8 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private static final String TAG = "Auth Activity";
 
+    private String selectedCity, selectedArea;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +111,8 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
         bloodGroup.setAdapter(bloodGroupsDataAdapter);
 
         city.setOnItemSelectedListener(this);
+
+        area.setOnItemSelectedListener(this);
     }
 
     @Override
@@ -127,11 +131,14 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        String s = (String) adapterView.getItemAtPosition(i);
-        Log.d(TAG,"item selected: "+s);
-        if (!s.equals("City") && !s.equals("Dhaka")) {
-            switch (adapterView.getId()) {
-                case R.id.spinner_city_name:
+
+        adapterView.getItemAtPosition(i);
+        switch (adapterView.getId()){
+            case R.id.spinner_city_name:
+                if (adapterView.getItemAtPosition(i).equals("Dhaka") || adapterView.getItemAtPosition(i).equals("City")){
+                    selectedCity = (String) adapterView.getItemAtPosition(i);
+                    Log.d(TAG,"selected city is: "+selectedCity);
+                }else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("Sorry, we haven't started our service in this city yet.");
                     builder.setCancelable(true);
@@ -143,9 +150,14 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
                                 }
                             });
                     builder.show();
-                    break;
-            }
+                }
+                break;
+            case R.id.spinner_area_name:
+                selectedArea = (String) adapterView.getItemAtPosition(i);
+                Log.d(TAG,"selected area is: "+selectedArea);
+                break;
         }
+
     }
 
     @Override
