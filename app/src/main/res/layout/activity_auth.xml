@@ -157,7 +157,7 @@
         android:layout_marginRight="@dimen/_15sdp"
         android:elevation="@dimen/_8sdp">
         <Button
-            android:id="@+id/btn_search_donor"
+            android:id="@+id/btn_make_donor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Make me a donor"

@@ -4,29 +4,61 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AuthActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private Spinner area, city, bloodGroup;
+
+    private EditText name, email, password, mobileNumber;
+
     private CircleImageView imageView;
+
+    private Button makeADonorButton;
+
     private static final int SELECT_PHOTO = 100;
 
     private static final String TAG = "Auth Activity";
 
-    private String selectedCity, selectedArea;
+    private String selectedCity, selectedArea, selectedBloodGroup;
+
+    private StorageReference storageReference;
+
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
+
+    private Uri selectedImage = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +71,84 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
 
         imageView = findViewById(R.id.profile_image);
 
+        name = findViewById(R.id.donor_name);
+        email = findViewById(R.id.donor_email);
+        password = findViewById(R.id.donor_password);
+        mobileNumber = findViewById(R.id.donor_number);
+
+        makeADonorButton = findViewById(R.id.btn_make_donor);
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("users");
+
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                 photoPickerIntent.setType("image/*");
                 startActivityForResult(photoPickerIntent, SELECT_PHOTO);
+            }
+        });
+
+        makeADonorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (TextUtils.isEmpty(name.getText())){
+                    Toast.makeText(getApplicationContext(),"please enter your name to proceed.",Toast.LENGTH_SHORT).show();
+                }
+                if (TextUtils.isEmpty(email.getText())){
+                    Toast.makeText(getApplicationContext(),"email field cannot be kept empty!.",Toast.LENGTH_SHORT).show();
+                }
+                if (!isEmailValid(email.getText().toString())){
+                    Toast.makeText(getApplicationContext(),"enter a valid email address!",Toast.LENGTH_SHORT).show();
+                }
+                if (!isPasswordValid(password.getText().toString())){
+                    Toast.makeText(getApplicationContext(),"enter a valid password!",Toast.LENGTH_SHORT).show();
+                }
+                if (TextUtils.isEmpty(password.getText())){
+                    Toast.makeText(getApplicationContext(),"password field cannot be kept empty!",Toast.LENGTH_SHORT).show();
+                }
+                if (TextUtils.isEmpty(mobileNumber.getText())){
+                    Toast.makeText(getApplicationContext(),"please provide your mobile number in order to proceed.",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Log.d(TAG,"selected image: "+selectedImage);
+                    storageReference = FirebaseStorage.getInstance().getReference("User Images").child(name.getText().toString());
+                    storageReference.putFile(selectedImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>(){
+                        @Override
+                        public void onSuccess(final UploadTask.TaskSnapshot taskSnapshot) {
+                            Toast.makeText(getApplicationContext(),"Upload done!!",Toast.LENGTH_SHORT).show();
+                            String n = name.getText().toString();
+                            String e = email.getText().toString().trim();
+                            String p = password.getText().toString().trim();
+                            String m = mobileNumber.getText().toString().trim();
+                            final User user = new User(n,e,p,m,selectedArea,selectedCity,selectedBloodGroup,null);
+                            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    int children = (int) dataSnapshot.getChildrenCount();
+                                    int currentChildSerial = children+1;
+                                    String imgUrl = taskSnapshot.getMetadata().getPath();
+                                    Log.d(TAG,"firebase image url: "+imgUrl);
+                                    databaseReference.child(String.valueOf(currentChildSerial)).setValue(user);
+                                    databaseReference.child(String.valueOf(currentChildSerial)).child("image").setValue(imgUrl);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                            startActivity(new Intent(AuthActivity.this,HomeActivity.class));
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(),"Registration failed!!",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
             }
         });
 
@@ -113,6 +217,8 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
         city.setOnItemSelectedListener(this);
 
         area.setOnItemSelectedListener(this);
+
+        bloodGroup.setOnItemSelectedListener(this);
     }
 
     @Override
@@ -121,7 +227,10 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
         switch(requestCode) {
             case SELECT_PHOTO:
                 if(resultCode == RESULT_OK){
-                    Uri selectedImage = data.getData();
+                    if (data != null) {
+                        selectedImage = data.getData();
+                    }
+                    Log.d(TAG, "image is: "+selectedImage);
                     if(selectedImage !=null){
                         imageView.setImageURI(selectedImage);
                     }
@@ -156,6 +265,10 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
                 selectedArea = (String) adapterView.getItemAtPosition(i);
                 Log.d(TAG,"selected area is: "+selectedArea);
                 break;
+            case R.id.spinner_blood_group:
+                selectedBloodGroup = (String) adapterView.getItemAtPosition(i);
+                Log.d(TAG,"selected blood group is: "+selectedBloodGroup);
+                break;
         }
 
     }
@@ -163,5 +276,16 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+    public static boolean isEmailValid(String email){
+        Pattern pattern = Patterns.EMAIL_ADDRESS;
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
+    //Check password with minimum requirement here(it should be minimum 6 characters)
+    public static boolean isPasswordValid(String password){
+        return password.length() >= 6;
     }
 }
