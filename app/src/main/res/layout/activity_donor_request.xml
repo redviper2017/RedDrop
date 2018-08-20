@@ -10,18 +10,20 @@
         android:id="@+id/linear_layout_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@id/cardView_form"
         android:background="@color/lightYellow"
-        android:layout_marginTop="@dimen/_15sdp"
         android:layout_marginLeft="@dimen/_15sdp"
         android:layout_marginRight="@dimen/_15sdp"
         android:elevation="@dimen/_8sdp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Please fill up the below form inorder to search for donors:"
-            android:layout_centerHorizontal="true"
-            android:textSize="@dimen/_14ssp"
-            android:padding="@dimen/_10sdp"
+            android:text="@string/please_fill_up_the_below_form_inorder_to_search_for_donors"
+            android:textSize="@dimen/_12ssp"
+            android:paddingLeft="@dimen/_10sdp"
+            android:paddingRight="@dimen/_10sdp"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_5sdp"
             android:textColor="@android:color/black"/>
             <!--android:textStyle="bold"/>-->
     </LinearLayout>
@@ -29,7 +31,7 @@
         android:id="@+id/cardView_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/linear_layout_text"
+        android:layout_centerInParent="true"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginLeft="@dimen/_15sdp"
         android:layout_marginRight="@dimen/_15sdp"

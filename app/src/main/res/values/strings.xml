@@ -20,4 +20,10 @@
     <string name="my_next_donation_date">My Next Donation Date</string>
     <string name="logout">Log Out</string>
     <string name="login">Login</string>
+    <string name="please_fill_up_the_below_form_inorder_to_search_for_donors">Please fill up the below form inorder to search for donors:</string>
+    <string name="please_enter_your_already_registered_email_address_and_hit_the_button_below_you_ll_get_an_email_with_a_link_for_resetting_a_new_password">Please enter your email address and hit the button below. You\'ll get an email with a link for password reset.</string>
+    <string name="reset">Reset</string>
+    <string name="nearby_requests">Nearby Requests</string>
+    <string name="all_requests">All Requests</string>
+    <string name="my_donations">My Donations</string>
 </resources>

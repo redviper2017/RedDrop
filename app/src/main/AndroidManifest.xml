@@ -28,7 +28,8 @@
             android:name=".DonorHomeActivity"
             android:label="@string/title_activity_donor_home"
             android:theme="@style/AppTheme" />
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".ResetPasswordActivity"></activity>
     </application>
 
 </manifest>
