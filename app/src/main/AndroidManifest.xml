@@ -14,7 +14,6 @@
         android:roundIcon="@drawable/ic_blood_drop_svgrepo_com"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" />
         <activity android:name=".AuthActivity" />
         <activity android:name=".StartActivity">
             <intent-filter>
@@ -24,12 +23,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".DonorRequestActivity" />
-
-        <service
-            android:name=".GeocodeAddressIntentService"
-            android:exported="false" />
-
-        <activity android:name=".HomeActivity"></activity>
+        <activity android:name=".HomeActivity" />
+        <activity
+            android:name=".DonorHomeActivity"
+            android:label="@string/title_activity_donor_home"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".LoginActivity"></activity>
     </application>
 
 </manifest>

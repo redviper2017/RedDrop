@@ -21,7 +21,7 @@ public class StartActivity extends AppCompatActivity {
         donateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(StartActivity.this,MainActivity.class));
+                startActivity(new Intent(StartActivity.this,AuthActivity.class));
                 finish();
             }
         });

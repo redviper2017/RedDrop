@@ -17,10 +17,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -58,7 +64,11 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
 
+    private FirebaseAuth firebaseAuth;
+
     private Uri selectedImage = null;
+
+    private TextView alreadyHaveAccountText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +88,12 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
 
         makeADonorButton = findViewById(R.id.btn_make_donor);
 
+        alreadyHaveAccountText = findViewById(R.id.btn_takeToLoginScreen);
+
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("users");
+
+        firebaseAuth = FirebaseAuth.getInstance();
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +101,14 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                 photoPickerIntent.setType("image/*");
                 startActivityForResult(photoPickerIntent, SELECT_PHOTO);
+            }
+        });
+
+        alreadyHaveAccountText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(AuthActivity.this,LoginActivity.class));
+                finish();
             }
         });
 
@@ -119,17 +141,20 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
                         public void onSuccess(final UploadTask.TaskSnapshot taskSnapshot) {
                             Toast.makeText(getApplicationContext(),"Upload done!!",Toast.LENGTH_SHORT).show();
                             String n = name.getText().toString();
-                            String e = email.getText().toString().trim();
-                            String p = password.getText().toString().trim();
+                            final String e = email.getText().toString().trim();
+                            final String p = password.getText().toString().trim();
                             String m = mobileNumber.getText().toString().trim();
                             final User user = new User(n,e,p,m,selectedArea,selectedCity,selectedBloodGroup,null);
                             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     int children = (int) dataSnapshot.getChildrenCount();
-                                    int currentChildSerial = children+1;
+                                    final int currentChildSerial = children+1;
                                     String imgUrl = taskSnapshot.getMetadata().getPath();
                                     Log.d(TAG,"firebase image url: "+imgUrl);
+
+                                    createAccount(e,p,currentChildSerial);
+
                                     databaseReference.child(String.valueOf(currentChildSerial)).setValue(user);
                                     databaseReference.child(String.valueOf(currentChildSerial)).child("image").setValue(imgUrl);
                                 }
@@ -139,7 +164,7 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
 
                                 }
                             });
-                            startActivity(new Intent(AuthActivity.this,HomeActivity.class));
+                            startActivity(new Intent(AuthActivity.this,DonorHomeActivity.class));
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -222,6 +247,17 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        //check if user is logged in then go to Home Activity bypassing the Auth Activity
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser != null){
+            startActivity(new Intent(AuthActivity.this,DonorHomeActivity.class));
+            finish();
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode) {
@@ -287,5 +323,23 @@ public class AuthActivity extends AppCompatActivity implements AdapterView.OnIte
     //Check password with minimum requirement here(it should be minimum 6 characters)
     public static boolean isPasswordValid(String password){
         return password.length() >= 6;
+    }
+
+    public void createAccount(String email, String password, final int currentChildSerial){
+        firebaseAuth.createUserWithEmailAndPassword(email,password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()){
+                            Toast.makeText(getApplicationContext(),"Congratulations! You are now a registered blood donor of Red Drop",Toast.LENGTH_SHORT).show();
+                            FirebaseUser user = firebaseAuth.getCurrentUser();
+                            Intent intent = new Intent(AuthActivity.this,HomeActivity.class);
+                            intent.putExtra("CURRENT_USER_SERIAL",currentChildSerial);
+                            startActivity(intent);
+                        }else {
+                            Toast.makeText(getApplicationContext(),"Authentication failed!!",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }
