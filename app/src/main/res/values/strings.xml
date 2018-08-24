@@ -26,4 +26,7 @@
     <string name="nearby_requests">Nearby Requests</string>
     <string name="all_requests">All Requests</string>
     <string name="my_donations">My Donations</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

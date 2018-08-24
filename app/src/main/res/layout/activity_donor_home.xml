@@ -40,19 +40,19 @@
             app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget">
 
             <android.support.design.widget.TabItem
-                android:id="@+id/tabItem"
+                android:id="@+id/nearbyRequestsTab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/nearby_requests" />
 
             <android.support.design.widget.TabItem
-                android:id="@+id/tabItem2"
+                android:id="@+id/allRequestsTab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/all_requests" />
 
             <android.support.design.widget.TabItem
-                android:id="@+id/tabItem3"
+                android:id="@+id/myDonationsTab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/my_donations" />
@@ -61,7 +61,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/container"
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
